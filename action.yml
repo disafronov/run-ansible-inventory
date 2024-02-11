@@ -1,0 +1,102 @@
+name: "Run SOPS-enabled Ansible with inventory directory"
+description: "Run SOPS-enabled Ansible with inventory directory"
+inputs:
+  directory:
+    description: "Ansible inventory directory"
+    required: true
+  ssh-private-key:
+    description: "Ansible SSH private key"
+    required: true
+  sops-age-private-key:
+    description: "Ansible SOPS Age private key"
+    required: true
+runs:
+  using: "composite"
+  steps:
+
+      - name: Checkout sources
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install & configure ssh-agent
+        uses: webfactory/ssh-agent@v0.8.0
+        with:
+          ssh-private-key: ${{ inputs.ssh-private-key }}
+
+      - name: Install Mozilla SOPS
+        uses: nhedger/setup-sops@v2
+
+      - name: Install YQ
+        uses: dcarbone/install-yq-action@v1.1.1
+        with:
+          version: v4.40.5
+          download-compressed: true
+
+      - name: Download custom requirements (if any)
+        shell: bash
+        run: |
+          if [ -s collections/ansible_collections/requirements.sh -a ! -x collections/ansible_collections/requirements.sh ]; then
+            chmod -c a+x collections/ansible_collections/requirements.sh
+          fi
+          if [ -x collections/ansible_collections/requirements.sh ]; then
+            echo "Detected: collections"
+            OLD_PWD="$(pwd)"
+            cd collections/ansible_collections/
+            ./requirements.sh
+            cd "${OLD_PWD}"
+          fi
+          if [ -s roles/requirements.sh -a ! -x roles/requirements.sh ]; then
+            chmod -c a+x roles/requirements.sh
+          fi
+          if [ -x roles/requirements.sh ]; then
+            echo "Detected: roles"
+            OLD_PWD="$(pwd)"
+            cd roles/
+            ./requirements.sh
+            cd "${OLD_PWD}"
+          fi
+
+      - name: Merge requirements files (if any)
+        shell: bash
+        run: |
+          if [ -s collections/requirements.yml ]; then
+            cat collections/requirements.yml > collections.yml.tmp
+            echo "Detected: collections"
+          else
+            touch collections.yml.tmp
+          fi
+          if [ -s roles/requirements.yml ]; then
+            yq '{"roles": .}' roles/requirements.yml > roles.yml.tmp
+            echo "Detected: roles"
+          else
+            touch roles.yml.tmp
+          fi
+          yq eval-all '. as $item ireduce ({}; . *+ $item)' collections.yml.tmp roles.yml.tmp > requirements.yml
+          rm -f roles.yml.tmp collections.yml.tmp
+
+      - name: Run [pr.yml] playbook on PR
+        if: ${{ github.event_name == 'pull_request' }}
+        uses: dawidd6/action-ansible-playbook@v2
+        with:
+          playbook: playbooks/pr.yml
+          requirements: requirements.yml
+          options: |
+            --inventory ${{ inputs.directory }}
+        env:
+          ANSIBLE_SOPS_AGE_KEY: ${{ inputs.sops-age-private-key }}
+
+      - name: Run [push.yml] playbook on PUSH
+        if: ${{ github.event_name == 'push' }}
+        uses: dawidd6/action-ansible-playbook@v2
+        with:
+          playbook: playbooks/push.yml
+          requirements: requirements.yml
+          options: |
+            --inventory ${{ inputs.directory }}
+        env:
+          ANSIBLE_SOPS_AGE_KEY: ${{ inputs.sops-age-private-key }}
+
+branding:
+  icon: folder
+  color: white
