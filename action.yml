@@ -28,7 +28,7 @@ runs:
         uses: nhedger/setup-sops@v2
 
       - name: Install YQ
-        uses: dcarbone/install-yq-action@v1.1.1
+        uses: dcarbone/install-yq-action@v1.2.0
         with:
           version: v4.40.5
           download-compressed: true
