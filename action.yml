@@ -10,6 +10,9 @@ inputs:
   sops-age-private-key:
     description: "Ansible SOPS Age private key"
     required: true
+  pipx-dependencies:
+    description: "Ansible dependencies to be injected with pipx"
+    required: false
 runs:
   using: "composite"
   steps:
@@ -32,6 +35,12 @@ runs:
         with:
           version: v4.40.5
           download-compressed: true
+
+      - name: Install pipx dependencies (if any)
+        if: ${{ inputs.pipx-dependencies != '' }}
+        shell: bash
+        run: |
+          pipx inject --global ansible-core ${{ inputs.pipx-dependencies }}
 
       - name: Download custom requirements (if any)
         shell: bash
