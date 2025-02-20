@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.2] - 2025-02-20
+
+### 🚜 Refactor
+
+- Readme
+
 ## [1.2.1] - 2025-01-27
 
 ### 🚜 Refactor
