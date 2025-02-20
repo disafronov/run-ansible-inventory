@@ -39,7 +39,7 @@ jobs:
       - find-out-changed-inventories
     steps:
       - name: Run SOPS-enabled Ansible with inventory directory
-        uses: dmitriysafronov/run-ansible-inventory@v1.2.1
+        uses: dmitriysafronov/run-ansible-inventory@v1.2.2
         with:
           directory: ${{ matrix.directory }}
           ssh-private-key: ${{ secrets.ANSIBLE_SSH_PRIVATE_KEY }}
