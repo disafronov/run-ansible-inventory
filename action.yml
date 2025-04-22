@@ -18,7 +18,7 @@ runs:
   steps:
 
       - name: Checkout sources
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.2.2
         with:
           fetch-depth: 0
 
@@ -28,7 +28,7 @@ runs:
           ssh-private-key: ${{ inputs.ssh-private-key }}
 
       - name: Install Mozilla SOPS
-        uses: nhedger/setup-sops@v2
+        uses: nhedger/setup-sops@v2.1.1
 
       - name: Install YQ
         uses: dcarbone/install-yq-action@v1.3.1
@@ -86,7 +86,7 @@ runs:
 
       - name: Run [pr.yml] playbook on PR
         if: ${{ github.event_name == 'pull_request' }}
-        uses: dawidd6/action-ansible-playbook@v3
+        uses: dawidd6/action-ansible-playbook@a4133a9690f77b38c8227021ed497fc1267635d5
         with:
           playbook: playbooks/pr.yml
           requirements: requirements.yml
@@ -97,7 +97,7 @@ runs:
 
       - name: Run [push.yml] playbook on PUSH
         if: ${{ github.event_name == 'push' }}
-        uses: dawidd6/action-ansible-playbook@v3
+        uses: dawidd6/action-ansible-playbook@a4133a9690f77b38c8227021ed497fc1267635d5
         with:
           playbook: playbooks/push.yml
           requirements: requirements.yml
