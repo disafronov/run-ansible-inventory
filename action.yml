@@ -33,7 +33,7 @@ runs:
       - name: Install YQ
         uses: dcarbone/install-yq-action@v1.3.1
         with:
-          version: v4.40.5
+          version: v4.45.1
           download-compressed: true
 
       - name: Install pipx dependencies (if any)
