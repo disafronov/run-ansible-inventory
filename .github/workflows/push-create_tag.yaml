@@ -37,7 +37,8 @@ jobs:
         env:
           OUTPUT: CHANGELOG.md
 
-      - uses: EndBug/add-and-commit@v9.1.4
+      - name: Commit changes back to repository
+        uses: EndBug/add-and-commit@v9.1.4
         if: "${{ ! startsWith(github.event.head_commit.message, 'docs: update changelog for ') && steps.semver.outputs.next != '' }}"
         with:
           add: 'CHANGELOG.md'
