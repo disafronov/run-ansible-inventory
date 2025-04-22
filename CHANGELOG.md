@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.0] - 2025-04-22
+
+### 🚀 Features
+
+- Update yq version
+
+### 🚜 Refactor
+
+- Pin versions in action
+- Pin versions
+
 ## [1.2.2] - 2025-02-20
 
 ### 🚜 Refactor
