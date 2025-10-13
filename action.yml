@@ -86,7 +86,7 @@ runs:
 
       - name: Run [pr.yml] playbook on PR
         if: ${{ github.event_name == 'pull_request' }}
-        uses: dawidd6/action-ansible-playbook@93764e7048f4dd16117d134dadb4b36e8ee73227
+        uses: dawidd6/action-ansible-playbook@3363d6aa333ecb41ef01579bc5eb4412b3d6802f
         with:
           playbook: playbooks/pr.yml
           requirements: requirements.yml
@@ -97,7 +97,7 @@ runs:
 
       - name: Run [push.yml] playbook on PUSH
         if: ${{ github.event_name == 'push' }}
-        uses: dawidd6/action-ansible-playbook@93764e7048f4dd16117d134dadb4b36e8ee73227
+        uses: dawidd6/action-ansible-playbook@3363d6aa333ecb41ef01579bc5eb4412b3d6802f
         with:
           playbook: playbooks/push.yml
           requirements: requirements.yml
